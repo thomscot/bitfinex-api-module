@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='bitfinex-api-module',
       version='0.2.2',
@@ -15,5 +15,6 @@ setup(name='bitfinex-api-module',
           'six==1.12.0',
           'pyee==5.0.0',
           'aiohttp==3.4.4',
-      ]
+      ],
+      packages=find_packages(),
       )
