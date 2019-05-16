@@ -249,7 +249,7 @@ class BfxRest:
         @return Array <models.Trade>
         """
         if symbol is None or symbol == "":
-            endpoint = "auth/r/trades/hist".format(symbol)
+            endpoint = "auth/r/trades/hist"
         else:
             endpoint = "auth/r/trades/{}/hist".format(symbol)
         params = "?start={}&end={}&limit={}".format(start, end, limit)
