@@ -327,7 +327,7 @@ class BfxRest:
         credits = await self.post(endpoint, params=params)
         return [FundingCredit.from_raw_credit(c) for c in credits]
 
-    async def get_currency_moevements(self, currency, start, end, limit=25):
+    async def get_currency_movements(self, currency, start, end, limit=25):
         """
         Get all the movements of a given currency.
 
