@@ -2,6 +2,39 @@
 Module used to describe Movements as returned by Bitfinex API
 """
 
+from enum import Enum, auto, unique
+
+
+@unique
+class MovementModel(Enum):
+    # coming from payload documented here: https://docs.bitfinex.com/v2/reference#movements
+    ID = 0
+    CURRENCY = auto()
+    CURRENCY_NAME = auto()
+    null1 = auto()
+    null2 = auto()
+    MTS_STARTED = auto()
+    MTS_UPDATED = auto()
+    null3 = auto()
+    null4 = auto()
+    STATUS = auto()
+    null5 = auto()
+    null6 = auto()
+    AMOUNT = auto()
+    FEES = auto()
+    null7 = auto()
+    null8 = auto()
+    DESTINATION_ADDRESS = auto()
+    null9 = auto()
+    null10 = auto()
+    null11 = auto()
+    TRANSACTION_ID = auto()
+    null12 = auto()
+
+    def __int__(self):
+        return self.value
+
+
 
 class Movement:
     """
@@ -36,13 +69,25 @@ class Movement:
     @staticmethod
     def from_raw_rest_movement(raw_movement):
         """
-        Generate a Movement object from a raw movement array
+        Parse a raw movement array into an Movement object
+
+        @return Movement
         """
-        # [24224048, 'BTC', 'BITCOIN', 2019-01-01, 2019-01-02, None, 1.0, 0.0001, 
-        #  '3A9iiUAHG4ti3HCfSG4VmeFtMcSVyFjRLL', 'a5b9ff7a66aceb5f575f8ff43c7962dda6b6f6302814d2470b35d4b202befa28']
-        return Movement(*raw_movement)
+        movement_id = raw_movement[int(MovementModel.ID)]
+        currency = raw_movement[int(MovementModel.CURRENCY)]
+        currency_name = raw_movement[int(MovementModel.CURRENCY_NAME)]
+        mts_started = raw_movement[int(MovementModel.MTS_STARTED)]
+        mts_updated = raw_movement[int(MovementModel.MTS_UPDATED)]
+        status = raw_movement[int(MovementModel.STATUS)]
+        amount = raw_movement[int(MovementModel.AMOUNT)]
+        fees = raw_movement[int(MovementModel.FEES)]
+        destination_address = raw_movement[int(MovementModel.DESTINATION_ADDRESS)]
+        transaction_id = raw_movement[int(MovementModel.TRANSACTION_ID)]
+
+        return Movement(movement_id, currency, currency_name, mts_started, mts_updated,
+                        status, amount, fees, destination_address, transaction_id)
 
 
     def __str__(self):
-        return "Movement '{}': {} {} -> {} fee={}>".format(
-            self.movement_start_time, self.amount, self.currency, self.destination_address, self.fee)
+        return "Movement {}: {} {} -> {} fees={}>".format(
+            self.movement_start_time, self.amount, self.currency, self.destination_address, self.fees)
