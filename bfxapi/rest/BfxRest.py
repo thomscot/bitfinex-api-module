@@ -342,24 +342,6 @@ class BfxRest:
         raw_movements = await self.bfx.rest.post(endpoint, params=params)
         return [Movement.from_raw_movement(rm) for rm in raw_movements]
 
-    async def get_all_movements(self, start, end, limit=25):
-        """
-        Get all the movements for all currencies.
-
-        @param start int: millisecond start time
-        @param end int: millisecond end time
-        @param limit int: max number of items in response (max 25)
-        @return Array [[<models.Movemet>], [<models.Movemet>], ...]
-        """
-        wallets = await self.bfx.rest.get_wallets()
-
-        all_movements = []
-        for wallet in wallets:
-            mvs = await self.get_currency_moevements(wallet.currency, start, end, limit)
-            all_movements.append(mvs)
-
-        return all_movements
-
 
     ##################################################
     #                     Orders                     #
