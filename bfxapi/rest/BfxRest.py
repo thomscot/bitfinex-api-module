@@ -339,7 +339,7 @@ class BfxRest:
         """
         endpoint = f'auth/r/movements/{currency}/hist'
         params = f"?start={start.timestamp() * 1000}&end={end.timestamp() * 1000}&limit={limit}"
-        raw_movements = await self.bfx.rest.post(endpoint, params=params)
+        raw_movements = await self.post(endpoint, params=params)
         return [Movement.from_raw_movement(rm) for rm in raw_movements]
 
 
