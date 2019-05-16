@@ -9,7 +9,7 @@ import json
 
 from ..utils.CustomLogger import CustomLogger
 from ..utils.auth import generate_auth_headers
-from ..models import Wallet, Order, Position, Trade, FundingLoan, FundingOffer
+from ..models import Wallet, Order, Position, Trade, FundingLoan, FundingOffer, Movement
 from ..models import FundingCredit
 
 
@@ -237,18 +237,21 @@ class BfxRest:
         raw_trades = await self.post(endpoint)
         return [Trade.from_raw_rest_trade(rt) for rt in raw_trades]
 
-    async def get_trades(self, symbol, start, end, limit=25):
+    async def get_trades(self, start, end, symbol=None, limit=25):
         """
         Get all of the trades between the start and end period associated with API_KEY
         - Requires authentication.
 
-        @param symbol string: pair symbol i.e tBTCUSD
+        @param symbol string: pair symbol i.e tBTCUSD. If empty all symbols will be returend
         @param start int: millisecond start time
         @param end int: millisecond end time
         @param limit int: max number of items in response
         @return Array <models.Trade>
         """
-        endpoint = "auth/r/trades/{}/hist".format(symbol)
+        if symbol is None or symbol == "":
+            endpoint = "auth/r/trades/hist".format(symbol)
+        else:
+            endpoint = "auth/r/trades/{}/hist".format(symbol)
         params = "?start={}&end={}&limit={}".format(start, end, limit)
         raw_trades = await self.post(endpoint, params=params)
         return [Trade.from_raw_rest_trade(rt) for rt in raw_trades]
@@ -325,6 +328,40 @@ class BfxRest:
         params = "?start={}&end={}&limit={}".format(start, end, limit)
         credits = await self.post(endpoint, params=params)
         return [FundingCredit.from_raw_credit(c) for c in credits]
+
+    async def get_currency_moevements(self, currency, start, end, limit=25):
+        """
+        Get all the movements of a given currency.
+
+        @param currency string: currency symbol i.e. BTC
+        @param start int: millisecond start time
+        @param end int: millisecond end time
+        @param limit int: max number of items in response (max 25)
+        @return Array <models.Movement>
+        """
+        endpoint = f'auth/r/movements/{currency}/hist'
+        params = f"?start={start.timestamp() * 1000}&end={end.timestamp() * 1000}&limit={limit}"
+        raw_movements = await self.bfx.rest.post(endpoint, params=params)
+        return [Movement.from_raw_movement(rm) for rm in raw_movements]
+
+    async def get_all_movements(self, start, end, limit=25):
+        """
+        Get all the movements for all currencies.
+
+        @param start int: millisecond start time
+        @param end int: millisecond end time
+        @param limit int: max number of items in response (max 25)
+        @return Array [[<models.Movemet>], [<models.Movemet>], ...]
+        """
+        wallets = await self.bfx.rest.get_wallets()
+
+        all_movements = []
+        for wallet in wallets:
+            mvs = await self.get_currency_moevements(wallet.currency, start, end, limit)
+            all_movements.append(mvs)
+
+        return all_movements
+
 
     ##################################################
     #                     Orders                     #
