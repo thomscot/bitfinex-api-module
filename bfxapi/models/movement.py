@@ -7,7 +7,10 @@ from enum import Enum, auto, unique
 
 @unique
 class MovementModel(Enum):
-    # coming from payload documented here: https://docs.bitfinex.com/v2/reference#movements
+    """
+    Model describing a movement.
+    Reference here: https://docs.bitfinex.com/v2/reference#movements
+    """
     ID = 0
     CURRENCY = auto()
     CURRENCY_NAME = auto()
@@ -49,10 +52,9 @@ class Movement:
     DESTINATION_ADDRESS String  Destination address
     TRANSACTION_ID  String  Transaction identifier
     """
-
-
-    def __init__(self, movement_id, currency, currency_name, movement_start_time, movement_update_time, 
-                 status, amount, fees, destination_address, transaction_id):
+    def __init__(self, movement_id, currency, currency_name, movement_start_time,
+                 movement_update_time, status, amount, fees, destination_address,
+                 transaction_id):
         # pylint: disable=invalid-name
         self.id = movement_id
         self.currency = currency
@@ -90,4 +92,5 @@ class Movement:
 
     def __str__(self):
         return "Movement {}: {} {} -> {} fees={}>".format(
-            self.movement_start_time, self.amount, self.currency, self.destination_address, self.fees)
+            self.movement_start_time, self.amount, self.currency,
+            self.destination_address, self.fees)
