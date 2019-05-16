@@ -248,10 +248,8 @@ class BfxRest:
         @param limit int: max number of items in response
         @return Array <models.Trade>
         """
-        if symbol is None or symbol == "":
-            endpoint = "auth/r/trades/hist"
-        else:
-            endpoint = "auth/r/trades/{}/hist".format(symbol)
+
+        endpoint = "auth/r/trades/{}/hist".format(symbol) if symbol else "auth/r/trades/hist"
         params = "?start={}&end={}&limit={}".format(start, end, limit)
         raw_trades = await self.post(endpoint, params=params)
         return [Trade.from_raw_rest_trade(rt) for rt in raw_trades]
