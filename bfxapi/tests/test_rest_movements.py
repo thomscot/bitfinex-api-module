@@ -18,8 +18,6 @@ class TestBfxRest(unittest.TestCase):
         movements = asyncio.run(bfx.get_currency_movements('BTC', datetime(2015, 9, 1, tzinfo=tzutc()),
                                                            datetime(2019, 5, 1, tzinfo=tzutc())))
         self.assertIsNotNone(movements)
-        for mv in movements:
-            print(mv)
 
         loop.close()
 
